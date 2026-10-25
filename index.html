@@ -1,0 +1,2621 @@
+<!DOCTYPE html>
+
+
+
+<html lang="id">
+
+
+
+ <head>
+
+
+
+  <meta charset="utf-8"/>
+
+
+
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+
+
+
+  <title>Our Memories — Happy Birthday ♡</title>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+
+
+
+ <style>
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap');
+
+:root {
+  --blue: #65bdf2;
+  --blue-deep: #287db8;
+  --blue-dark: #183653;
+  --blue-light: #dff3ff;
+  --white: #ffffff;
+  --ink: #244766;
+  --muted: #6b8ba7;
+  --shadow: 0 18px 45px rgba(43, 115, 165, .16);
+}
+* { box-sizing: border-box; }
+html { min-height: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Quicksand', sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 12% 14%, rgba(255,255,255,.95) 0 2px, transparent 3px),
+    radial-gradient(circle at 80% 22%, rgba(255,255,255,.9) 0 2px, transparent 3px),
+    radial-gradient(circle at 65% 75%, rgba(255,255,255,.8) 0 1.5px, transparent 3px),
+    radial-gradient(ellipse at top left, #f8fdff 0, transparent 42%),
+    linear-gradient(145deg, #e7f6ff, #cdeaff 52%, #f7fcff);
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible, [role="button"]:focus-visible {
+  outline: 3px solid #69bdf2; outline-offset: 3px;
+}
+.hidden { display: none !important; }
+.screen {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 18px;
+  position: relative;
+  overflow: hidden;
+}
+#passkey-screen { background: transparent; }
+.pin-container {
+  width: min(100%, 360px);
+  padding: 34px 25px;
+  border: 1px solid rgba(255,255,255,.85);
+  border-radius: 30px;
+  text-align: center;
+  background: rgba(255,255,255,.76);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+}
+.pin-flower {
+  width: 72px; height: 72px; margin: 0 auto 16px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  color: #398bc9; background: #e1f4ff;
+  font-size: 42px; box-shadow: 0 8px 24px #b8e5ff;
+  animation: float 3s ease-in-out infinite;
+}
+.pin-title, .gallery-head h1, .playlist-title, .letter-title {
+  font-family: 'Baloo 2', cursive;
+}
+.pin-title { font-size: 27px; font-weight: 800; color: #28577e; }
+.pin-subtitle { margin-top: 6px; color: var(--muted); font-size: 14px; }
+.pin-dots { display: flex; justify-content: center; gap: 13px; margin: 25px 0; }
+.dot {
+  width: 13px; height: 13px; border-radius: 50%;
+  background: #fff; border: 2px solid #8ccdf3; transition: .2s;
+}
+.dot.filled, .dot.active { background: #48a9e7; box-shadow: 0 0 12px #9bdcff; }
+.numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; }
+.num-btn {
+  min-height: 54px; border: 1px solid #c8e8fb; border-radius: 17px;
+  background: rgba(255,255,255,.9); color: #28577e; font-size: 20px; font-weight: 700;
+  box-shadow: 0 5px 14px rgba(57,139,201,.09); transition: .2s;
+}
+.num-btn:hover { background: #dff3ff; transform: translateY(-2px); }
+.pin-hint { margin-top: 22px; color: #7898b2; font-size: 12px; }
+
+/* Playlist */
+#playlistScreen { padding: 28px 16px; }
+.playlist-panel {
+  width: min(100%, 700px); padding: clamp(20px, 4vw, 34px);
+  border-radius: 30px; border: 1px solid rgba(255,255,255,.95);
+  background: rgba(255,255,255,.82); box-shadow: var(--shadow); backdrop-filter: blur(18px);
+}
+.playlist-topline { display: flex; justify-content: space-between; gap: 12px; color: #6594b8; font-size: 10px; font-weight: 800; letter-spacing: 2px; }
+.playlist-hero { display: flex; align-items: center; gap: 23px; margin: 25px 0 28px; padding: 20px; border-radius: 23px; background: linear-gradient(135deg, #e8f7ff, #fff); border: 1px solid #d7efff; }
+.playlist-feature-cover { width: 150px; aspect-ratio: 1; flex: 0 0 150px; overflow: hidden; border-radius: 20px; background: #d6efff; }
+.playlist-feature-cover img, .track-cover img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.playlist-kicker { font-size: 10px; letter-spacing: 1.8px; color: #6e9cbe; font-weight: 800; }
+.playlist-title { margin: 5px 0; color: #244e72; font-size: clamp(26px, 5vw, 39px); line-height: 1.1; }
+.playlist-title span { color: #58b3ed; }
+.playlist-desc { margin: 8px 0 12px; color: #6c8ca6; font-size: 13px; line-height: 1.7; }
+.playlist-current { display: inline-flex; align-items: center; gap: 8px; color: #398bc9; font-size: 12px; font-weight: 800; }
+.equalizer { display: inline-block; animation: pulse 1s infinite; }
+.track-list { display: grid; gap: 9px; }
+.track {
+  display: flex; align-items: center; gap: 13px; padding: 10px 12px;
+  border: 1px solid transparent; border-radius: 17px; background: rgba(243,250,255,.9);
+  transition: .2s;
+}
+.track.active, .track.playing { background: #e1f3ff; border-color: #9bd7ff; }
+.track-number { color: #8aa8bf; width: 20px; font-size: 12px; font-weight: 800; }
+.track-cover { width: 48px; height: 48px; flex: 0 0 48px; overflow: hidden; border-radius: 12px; background: #d6efff; }
+.track-info { min-width: 0; flex: 1; }
+.track-name { color: #244e72; font-size: 14px; font-weight: 800; }
+.track-artist { margin-top: 3px; color: #7c9ab2; font-size: 12px; }
+.track-play, .playlist-main-play, .playlist-next {
+  border: 0; color: #fff; background: linear-gradient(135deg, #70c9fa, #398bc9);
+  box-shadow: 0 6px 16px rgba(57,139,201,.2); transition: .2s;
+}
+.track-play { width: 38px; height: 38px; border-radius: 50%; flex: 0 0 38px; }
+.track-play:hover, .playlist-main-play:hover, .playlist-next:hover { transform: translateY(-2px); filter: brightness(1.05); }
+.track-status { min-height: 20px; margin: 15px 0 8px; text-align: center; color: #7293ad; font-size: 12px; }
+.playlist-controls { display: flex; justify-content: center; align-items: center; gap: 23px; margin: 8px 0 14px; }
+.playlist-controls button { width: 38px; height: 38px; border: 0; background: transparent; color: #398bc9; font-size: 25px; }
+.playlist-controls .playlist-main-play { width: 52px; height: 52px; border-radius: 50%; font-size: 20px; }
+.playlist-timeline { display: flex; align-items: center; gap: 10px; color: #7795ac; font-size: 11px; }
+.playlist-timeline input { flex: 1; min-width: 0; accent-color: #398bc9; }
+.playlist-next { display: block; width: 100%; margin-top: 22px; padding: 14px 18px; border-radius: 30px; font-size: 13px; font-weight: 800; }
+
+/* Kado */
+#giftScreen, #loadingScreen { flex-direction: column; gap: 20px; text-align: center; }
+.gift-title, .open-text, .loading-title { color: #398bc9; font-weight: 800; letter-spacing: 2px; font-size: 12px; }
+.gift { display: grid; place-items: center; cursor: pointer; }
+.gift-image { display: block; width: min(65vw, 280px); max-height: 42vh; object-fit: contain; filter: drop-shadow(0 16px 20px rgba(54,133,190,.22)); transition: transform .35s ease; animation: float 3s ease-in-out infinite; }
+.gift:hover .gift-image { transform: scale(1.06) rotate(-3deg); }
+.gift.opening .gift-image { animation: giftOpen .8s ease forwards; }
+.open-text { font-size: 11px; animation: pulse 1.5s infinite; }
+
+/* Surat */
+#letterScreen { background: transparent; }
+.letter-card { width: min(100%, 570px); padding: clamp(26px, 6vw, 45px); text-align: center; background: rgba(255,255,255,.9); border: 1px solid white; border-radius: 28px; box-shadow: var(--shadow); }
+.letter-emoji { font-size: 36px; margin-bottom: 12px; }
+.letter-title { margin: 0 0 16px; color: #398bc9; font-size: clamp(25px, 5vw, 34px); }
+.letter-body { color: #4c6d88; line-height: 1.9; font-size: 14px; white-space: pre-line; }
+.letter-next { margin-top: 25px; padding: 13px 24px; color: white; background: linear-gradient(135deg, #70c9fa, #398bc9); border: 0; border-radius: 30px; font-weight: 800; box-shadow: 0 8px 18px rgba(57,139,201,.2); }
+
+/* Loading */
+.loading-title { font-size: 14px; }
+.loading-bar { width: min(75vw, 320px); height: 9px; overflow: hidden; background: rgba(255,255,255,.85); border: 1px solid #c4e7fb; border-radius: 99px; }
+.loading-progress { width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #9cddff, #398bc9); transition: width .1s linear; }
+.loading-percent { color: #398bc9; font-weight: 800; }
+
+/* Galeri dan kue */
+#galleryScreen { width: 100%; min-height: 100vh; padding: 45px 20px 70px; color: #244766; }
+.gallery-head { width: min(100%, 800px); margin: 0 auto 28px; text-align: center; }
+.eyebrow { color: #6599bd; font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
+.gallery-head h1 { margin: 6px 0; color: #244e72; font-size: clamp(35px, 7vw, 58px); line-height: 1.1; }
+.heart { color: #58b3ed; }
+.gallery-head p { margin: 10px auto 0; max-width: 520px; color: #6c8ca6; font-size: 14px; line-height: 1.7; }
+.cake-section { text-align: center; margin: 30px auto 45px; }
+.cake-caption { margin-bottom: 14px; color: #4b8db9; font-size: 12px; font-weight: 800; letter-spacing: 1.5px; }
+.cake-area { display: flex; align-items: center; justify-content: center; min-height: 210px; padding: 12px; }
+.cake { position: relative; width: 220px; height: 170px; }
+.cake-plate { position: absolute; z-index: 1; left: 5px; right: 5px; bottom: 3px; height: 19px; border-radius: 50%; background: linear-gradient(#fff, #a9dfff); border: 2px solid #89cefa; box-shadow: 0 8px 16px rgba(53,124,178,.15); }
+.cake-body { position: absolute; z-index: 2; left: 20px; bottom: 18px; width: 180px; height: 91px; border: 2px solid #8bd0ff; border-radius: 13px 13px 19px 19px; background: linear-gradient(180deg, #bce7ff, #65b9f0); box-shadow: inset 0 -8px 0 rgba(41,132,192,.1); }
+.cake-top { position: absolute; z-index: 3; left: 20px; bottom: 93px; width: 180px; height: 30px; border: 2px solid #a6ddff; border-radius: 50%; background: linear-gradient(180deg, #fff, #dff4ff); }
+.cream { position: absolute; z-index: 4; top: -2px; width: 28px; height: 20px; background: #fff; border: 1px solid #b4e3ff; border-radius: 0 0 50% 50%; }
+.c1 { left: 13px; } .c2 { left: 48px; height: 25px; } .c3 { left: 83px; } .c4 { left: 118px; height: 25px; } .c5 { left: 148px; }
+.cake-heart { position: absolute; z-index: 5; color: #398bc9; font-size: 20px; }
+.ch1 { left: 25px; top: 39px; } .ch2 { left: 80px; top: 42px; font-size: 25px; } .ch3 { right: 24px; top: 39px; }
+.strawberry { position: absolute; z-index: 6; top: 25px; font-size: 20px; line-height: 1; }
+.s1 { left: 39px; } .s2 { left: 76px; font-size: 17px; } .s3 { right: 76px; font-size: 17px; } .s4 { right: 39px; }
+.candle { position: absolute; z-index: 7; width: 13px; height: 44px; left: calc(50% - 6.5px); top: 18px; border: 1px solid #72bdf0; border-radius: 4px; background: repeating-linear-gradient(45deg, #fff 0 5px, #69bdf2 5px 10px); }
+.flame { position: absolute; left: 2px; top: -17px; width: 8px; height: 14px; border-radius: 80% 20% 70% 30%; background: #ffd36d; transform: rotate(8deg); box-shadow: 0 0 13px rgba(255,190,70,.8); animation: flicker .6s ease-in-out infinite alternate; }
+.candle.blown-out .flame, .candle.blown-out > .flame { display: none; }
+.candle.blown-out .flame { opacity: 0; }
+.cake:has(.candle.blown-out) .flame { display: none; }
+.blow-candle-btn { padding: 12px 22px; border: 0; border-radius: 30px; color: #fff; background: linear-gradient(135deg, #64c3fa, #398bc9); font-weight: 800; box-shadow: 0 7px 18px rgba(57,139,201,.2); }
+.candle-message { color: #6594b8; font-size: 13px; }
+
+/* Polaroid */
+.polaroid-grid { width: min(100%, 1000px); margin: 0 auto; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 22px; align-items: start; }
+.polaroid { min-width: 0; margin: 0; padding: 9px 9px 14px; background: #fff; border: 1px solid #d6edff; box-shadow: 0 8px 22px rgba(42,103,151,.16); cursor: pointer; transform: rotate(var(--tilt, 0deg)); transition: transform .25s, box-shadow .25s; }
+.polaroid:hover { transform: translateY(-6px) rotate(0deg) scale(1.025); box-shadow: 0 14px 28px rgba(42,103,151,.22); }
+.polaroid img { display: block; width: 100%; aspect-ratio: 4 / 4.5; object-fit: cover; background: #edf8ff; border: 1px solid #e2f3ff; }
+.polaroid figcaption { padding-top: 11px; color: #315f85; font-family: 'Baloo 2', cursive; font-size: 14px; font-weight: 700; text-align: center; overflow-wrap: anywhere; }
+.flower-bouquet { grid-column: 1 / -1; justify-self: center; margin: 18px auto 0; padding: 20px 30px; text-align: center; cursor: pointer; border: 1px solid #fff; border-radius: 24px; background: rgba(255,255,255,.72); box-shadow: var(--shadow); transition: transform .25s; }
+.flower-bouquet:hover { transform: translateY(-4px) scale(1.02); }
+.bouquet-emoji { font-size: 60px; }
+.bouquet-caption { color: #397fb5; font-family: 'Baloo 2', cursive; font-size: 18px; font-weight: 800; }
+.bouquet-hint { margin-top: 4px; color: #7da5c3; font-size: 11px; letter-spacing: 1px; }
+.flying-flower { position: fixed; z-index: 1000; pointer-events: none; font-size: 25px; animation: flowerFly 1.8s ease-out forwards; }
+
+/* Popup foto */
+.modal { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(20,58,91,.55); backdrop-filter: blur(8px); }
+.modal.active { display: flex; }
+.modal-card { position: relative; width: min(100%, 460px); max-height: 90vh; overflow-y: auto; padding: 20px; text-align: center; background: #fff; border: 1px solid #c5e7ff; border-radius: 22px; box-shadow: 0 15px 40px rgba(42,103,151,.25); animation: popIn .25s ease; }
+.close-btn { position: absolute; z-index: 2; top: 10px; right: 10px; width: 36px; height: 36px; color: #fff; background: #398bc9; border: 0; border-radius: 50%; font-size: 25px; line-height: 1; }
+#modalImage { display: block; width: 100%; max-height: 55vh; object-fit: contain; border-radius: 12px; background: #eff8ff; }
+#modalTitle { color: #398bc9; font-family: 'Baloo 2', cursive; }
+#modalMessage { color: #587b97; line-height: 1.7; }
+
+/* Mini player */
+#nowPlaying { position: fixed; z-index: 50; right: 16px; bottom: 16px; display: none; align-items: center; gap: 11px; width: min(360px, calc(100vw - 24px)); padding: 10px; border: 1px solid rgba(255,255,255,.9); border-radius: 18px; background: rgba(255,255,255,.94); box-shadow: var(--shadow); backdrop-filter: blur(14px); }
+#nowPlaying.visible { display: flex; }
+.now-playing-art { width: 48px; height: 48px; flex: 0 0 48px; overflow: hidden; border-radius: 10px; background: #d6efff; }
+.now-playing-art img { width: 100%; height: 100%; object-fit: cover; }
+.now-playing-main { flex: 1; min-width: 0; }
+.now-playing-label { color: #78a0bd; font-size: 8px; font-weight: 800; letter-spacing: 1px; }
+#nowPlayingTitle { overflow: hidden; color: #244e72; font-size: 12px; font-weight: 800; white-space: nowrap; text-overflow: ellipsis; }
+#nowPlayingArtist { color: #7c9ab2; font-size: 10px; }
+.now-playing-timeline { display: flex; align-items: center; gap: 5px; color: #7898b2; font-size: 9px; }
+.now-playing-timeline input { width: 100%; min-width: 0; accent-color: #398bc9; }
+#nowPlayingToggle { width: 34px; height: 34px; flex: 0 0 34px; border: 0; border-radius: 50%; color: white; background: #398bc9; }
+
+/* Animasi */
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .55; } }
+@keyframes flicker { from { transform: rotate(7deg) scale(1); } to { transform: rotate(-7deg) scale(1.12); } }
+@keyframes giftOpen { 0% { transform: scale(1) rotate(0); } 45% { transform: scale(1.15) rotate(7deg); } 100% { transform: scale(.05) rotate(-15deg); opacity: 0; } }
+@keyframes popIn { from { opacity: 0; transform: scale(.92) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes flowerFly { 0% { opacity: 1; transform: translate(0,0) rotate(0) scale(.6); } 100% { opacity: 0; transform: translate(var(--x),var(--y)) rotate(var(--rotation)) scale(1.2); } }
+
+@media (max-width: 800px) {
+  .polaroid-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+}
+@media (max-width: 560px) {
+  .screen { padding: 20px 13px; }
+  .playlist-panel { padding: 18px 14px; border-radius: 23px; }
+  .playlist-hero { align-items: center; gap: 13px; padding: 13px; }
+  .playlist-feature-cover { width: 100px; flex-basis: 100px; border-radius: 15px; }
+  .playlist-kicker { font-size: 8px; letter-spacing: 1px; }
+  .playlist-title { font-size: 25px; }
+  .playlist-desc { font-size: 11px; }
+  .track { gap: 9px; padding: 8px; }
+  .track-cover { width: 42px; height: 42px; flex-basis: 42px; }
+  .track-name { font-size: 12px; }
+  .track-artist { font-size: 10px; }
+  #galleryScreen { padding: 34px 13px 50px; }
+  .polaroid-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+  .polaroid { padding: 7px 7px 11px; }
+  .polaroid figcaption { font-size: 12px; }
+  .cake-area { transform: scale(.88); transform-origin: center; min-height: 190px; }
+  .letter-card { padding: 26px 20px; }
+  .letter-body { font-size: 13px; }
+  #nowPlaying { right: 10px; bottom: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}
+
+
+/* === FIX MAKE A WISH + KUE & LILIN === */
+.letter-card {
+  width: min(100%, 680px);
+  padding: clamp(22px, 5vw, 44px);
+  overflow-wrap: anywhere;
+}
+.letter-body {
+  width: 100%;
+  text-align: left;
+  line-height: 1.95;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+.letter-next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 440px;
+  min-height: 62px;
+  margin: 30px auto 0;
+  padding: 16px 22px;
+  border: 1px solid rgba(255,255,255,.8);
+  border-radius: 20px;
+  background: linear-gradient(135deg, #8bd8ff 0%, #59b7ef 48%, #398bc9 100%);
+  color: #fff;
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(17px, 3.5vw, 22px);
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+  box-shadow: 0 9px 22px rgba(57,139,201,.3), inset 0 1px 0 rgba(255,255,255,.65);
+  transition: transform .22s ease, box-shadow .22s ease, filter .22s ease;
+  animation: wishGentleFloat 2.8s ease-in-out infinite;
+}
+.letter-next::after { content: '♡'; font-size: 25px; line-height: 1; }
+.letter-next:hover { transform: translateY(-3px) scale(1.015); filter: brightness(1.04); box-shadow: 0 14px 28px rgba(57,139,201,.36); }
+.letter-next:active { transform: scale(.98); }
+.cake-area { min-height: 235px; overflow: visible; }
+.cake { filter: drop-shadow(0 9px 10px rgba(57,139,201,.12)); }
+.cake-body {
+  background: linear-gradient(180deg, #dff4ff 0%, #a6ddff 42%, #66baf0 100%);
+  box-shadow: inset 0 7px 0 rgba(255,255,255,.4), inset 0 -8px 0 rgba(41,132,192,.1);
+}
+.cake-top { background: linear-gradient(180deg, #fff 0%, #eaf8ff 100%); box-shadow: inset 0 -4px 0 rgba(99,184,235,.16); }
+.cake-plate { box-shadow: 0 8px 16px rgba(53,124,178,.15), inset 0 3px 3px rgba(255,255,255,.85); }
+.cream { background: linear-gradient(180deg, #fff 0%, #eaf7ff 100%); box-shadow: 0 2px 3px rgba(66,151,202,.08); }
+.candle {
+  left: 50%;
+  top: 12px;
+  width: 13px;
+  height: 45px;
+  transform: translateX(-50%);
+  transform-origin: 50% 100%;
+  border: 1px solid #72bdf0;
+  border-radius: 5px 5px 3px 3px;
+  background: repeating-linear-gradient(135deg, #fff 0 5px, #69bdf2 5px 10px);
+  box-shadow: inset 2px 0 3px rgba(255,255,255,.9), 2px 3px 5px rgba(48,126,181,.16);
+  animation: candleNaturalSway 2.7s ease-in-out infinite;
+}
+.flame {
+  position: absolute;
+  left: 50%;
+  top: -19px;
+  width: 11px;
+  height: 17px;
+  border-radius: 55% 45% 50% 50%;
+  background: radial-gradient(ellipse at 50% 72%, #fffbd1 0%, #ffe58a 34%, #ffb347 68%, #ff914d 100%);
+  transform: translateX(-50%);
+  transform-origin: 50% 100%;
+  box-shadow: 0 0 7px rgba(255,197,80,.8), 0 0 17px rgba(255,174,67,.42);
+  animation: flameNaturalFlicker .55s ease-in-out infinite alternate;
+}
+.candle.blown-out { animation: none; }
+.candle.blown-out .flame, .candle.blown-out > .flame, .cake:has(.candle.blown-out) .flame { display: none; }
+.blow-candle-btn { min-height: 46px; padding: 12px 24px; transition: transform .2s ease, box-shadow .2s ease; }
+.blow-candle-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(57,139,201,.3); }
+@keyframes wishGentleFloat { 0%,100% { translate: 0 0; } 50% { translate: 0 -3px; } }
+@keyframes candleNaturalSway { 0%,100% { rotate: -1deg; } 50% { rotate: 1deg; } }
+@keyframes flameNaturalFlicker { 0% { transform: translateX(-50%) rotate(-5deg) scale(.95,1); } 100% { transform: translateX(-50%) rotate(5deg) scale(1.05,1.08); } }
+@media (max-width: 560px) {
+  .letter-card { padding: 24px 18px; }
+  .letter-body { font-size: 13px; line-height: 1.85; }
+  .letter-next { width: 100%; max-width: none; min-height: 60px; margin-top: 24px; padding: 15px 14px; border-radius: 17px; font-size: 18px; }
+  .cake-area { min-height: 220px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .letter-next, .candle, .flame { animation: none !important; }
+}
+
+</style>
+
+ </head>
+
+
+
+ <body>
+
+
+
+  <section class="screen" id="passkey-screen">
+
+
+
+   <div class="pin-container">
+
+
+
+    <div class="pin-flower">
+
+
+
+     ♡
+
+
+
+    </div>
+
+
+
+    <div class="pin-title">
+
+
+
+     For My Favorite Person
+
+
+
+    </div>
+
+
+
+    <div class="pin-subtitle">
+
+
+
+     Masukkan kode rahasia
+
+
+
+    </div>
+
+
+
+    <div class="pin-dots" id="pinDots">
+
+
+
+     <span class="dot">
+
+
+
+     </span>
+
+
+
+     <span class="dot">
+
+
+
+     </span>
+
+
+
+     <span class="dot">
+
+
+
+     </span>
+
+
+
+     <span class="dot">
+
+
+
+     </span>
+
+
+
+    </div>
+
+
+
+    <div class="numpad">
+
+
+
+     <button class="num-btn" onclick="pressKey('1')">
+
+
+
+      1
+
+
+
+     </button>
+
+
+
+     <button class="num-btn" onclick="pressKey('2')">
+
+
+
+      2
+
+
+
+     </button>
+
+
+
+     <button class="num-btn" onclick="pressKey('3')">
+
+
+
+      3
+
+
+
+     </button>
+
+
+
+     <button class="num-btn" onclick="pressKey('4')">
+
+
+
+      4
+
+
+
+     </button>
+
+
+
+     <button class="num-btn" onclick="pressKey('5')">
+
+
+
+      5
+
+
+
+     </button>
+
+
+
+     <button class="num-btn" onclick="pressKey('6')">
+
+
+
+      6
+
+
+
+     </button>
+
+
+
+     <button class="num-btn" onclick="pressKey('7')">
+
+
+
+      7
+
+
+
+     </button>
+
+
+
+     <button class="num-btn" onclick="pressKey('8')">
+
+
+
+      8
+
+
+
+     </button>
+
+
+
+     <button class="num-btn" onclick="pressKey('9')">
+
+
+
+      9
+
+
+
+     </button>
+
+
+
+     <button class="num-btn" onclick="pressKey('clear')">
+
+
+
+      ⌫
+
+
+
+     </button>
+
+
+
+     <button class="num-btn" onclick="pressKey('0')">
+
+
+
+      0
+
+
+
+     </button>
+
+
+
+     <button class="num-btn" onclick="pressKey('enter')">
+
+
+
+      &crarr;
+
+
+
+     </button>
+
+
+
+    </div>
+
+
+
+    <div class="pin-hint">
+
+
+
+     Hint: tahun lahir aku ✨
+
+
+
+    </div>
+
+
+
+   </div>
+
+
+
+  </section>
+
+
+
+  <section class="screen hidden" id="playlistScreen">
+  <div class="playlist-panel">
+    <div class="playlist-topline"><span>✦ SPECIAL PLAYLIST</span><span>2026</span></div>
+    <div class="playlist-hero">
+      <div class="playlist-feature-cover"><img id="playlistHeroCover" src="cover3.jpg" alt="Cover playlist" onerror="this.style.opacity='.2'"></div>
+      <div class="playlist-feature-info">
+        <div class="playlist-kicker">A LITTLE SOUNDTRACK FOR YOU</div>
+        <h1 class="playlist-title">Little Playlist <span>♡</span></h1>
+        <p class="playlist-desc">Pilih lagu yang ingin kamu dengarkan. Semoga tiap lagu bikin kamu senyum, ya.</p>
+        <div class="playlist-current"><span class="equalizer">▥</span><span id="playlistCurrentName">About You</span></div>
+      </div>
+    </div>
+    <div class="track-list">
+      <article class="track">
+        <span class="track-number">01</span>
+        <div class="track-cover"><img alt="Cover lagu pertama" onerror="this.style.opacity='.25'" src="cover1.jpg"></div>
+        <div class="track-info"><div class="track-name">Kasih Putih</div><div class="track-artist">Glenn Fredly</div></div>
+        <button aria-label="Putar Kasih Putih" class="track-play" onclick="playTrack(0)">▶</button>
+      </article>
+      <article class="track">
+        <span class="track-number">02</span>
+        <div class="track-cover"><img alt="Cover lagu kedua" onerror="this.style.opacity='.25'" src="cover2.jpg"></div>
+        <div class="track-info"><div class="track-name">Dunia Yang Nanti</div><div class="track-artist">Raim Laode</div></div>
+        <button aria-label="Putar Dunia Yang Nanti" class="track-play" onclick="playTrack(1)">▶</button>
+      </article>
+      <article class="track">
+        <span class="track-number">03</span>
+        <div class="track-cover"><img alt="Cover lagu ketiga" onerror="this.style.opacity='.25'" src="cover3.jpg"></div>
+        <div class="track-info"><div class="track-name">About You</div><div class="track-artist">The 1975</div></div>
+        <button aria-label="Putar About You" class="track-play" onclick="playTrack(2)">▶</button>
+      </article>
+    </div>
+    <div class="track-status" id="trackStatus">Pilih lagu untuk memulai playlist ♡</div>
+    <div class="playlist-controls">
+      <button type="button" aria-label="Lagu sebelumnya" onclick="changeTrack(-1)">‹</button>
+      <button type="button" class="playlist-main-play" aria-label="Putar atau jeda" onclick="togglePlaylistPlayback()" id="playlistMainPlay">▶</button>
+      <button type="button" aria-label="Lagu berikutnya" onclick="changeTrack(1)">›</button>
+    </div>
+    <div class="playlist-timeline"><span id="playlistTimeNow">0:00</span><input id="playlistProgress" type="range" min="0" max="100" value="0" step="0.1" aria-label="Posisi lagu"><span id="playlistTimeEnd">0:00</span></div>
+    <button class="playlist-next" onclick="goToGift()">Lanjut membuka kado ♡</button>
+  </div>
+  <audio id="song0" preload="metadata" src="lagu1.mp3"></audio>
+  <audio id="song1" preload="metadata" src="lagu2.mp3"></audio>
+  <audio id="song2" preload="none" src="lagu3.mp3"></audio>
+</section>
+
+<section class="screen hidden" id="giftScreen">
+
+
+
+   <div class="gift-title">
+
+
+
+    A LITTLE GIFT FOR YOU
+
+
+
+   </div>
+
+
+
+   <div class="gift" id="gift">
+
+
+
+    <img alt="Foto kado" class="gift-image" src="kado.png"/>
+
+
+
+   </div>
+
+
+
+   <div class="open-text">
+
+
+
+    TAP TO OPEN
+
+
+
+   </div>
+
+
+
+  </section>
+
+
+
+  <section class="screen hidden" id="letterScreen">
+
+
+
+   <article class="letter-card">
+
+
+
+    <div class="letter-emoji">
+
+
+
+     💌🎀
+
+
+
+    </div>
+
+
+
+    <h2 class="letter-title">
+     A Letter Just For You ♡
+    </h2>
+    <div class="letter-body">
+    hai sayanggg, kamu ingt hri inii apaa?betull, harii inii kamu happy birthdayy sayangg🥳🥳, selamat bertambahh umurr dann sehatt, akuu sanggar bahagia bertemu sama kamuu gantengg🤍🤍, kamu tuu gantengg nyaa kelewatann, maapp kann aku sering bikinn kamuu marahh marahh dann bikinn kamuu kesell jugaa, satuu lagii bikinnn kecewaa samaa kamuu, Dann semogaa hubungann kitaa semakin lamaa bisaa langgengg, makasii jugaa buatt moodkuu baikk, makasii udaa ngebuatt akuu di sayangg, di hargaii, penuhh sayangg, jangann pikirann anehh anehh yaa sayangg, makasii jugaa udaa ngebuatt akuu betahh samaa kamu, jangann jahatt jahatt samaa orangg lainn jugaa yaa sayangg, dan semogaa apaa yg kamuu impikann akann terwujudd fann kamuu bisaa jugaa bahagiaain orangg tuaa kamuu, happy birthday sayangg 😻💕
+happy birthday cayaaanngg acuuuuu yangg gantengg!!!🤍💫
+"aku cuma mau bilang aku beruntung bangett bisaa punyaa kamuu, makasii udaa hadirr dii hidupkuu. akuu tau duniaa kamuu gaa cuman akuu makasii udaa selaluu ada buat akuu, kamuu udahh jadii rumahh terbaikk untukkQuu, jadii support system terbaikk, kamuu jugaa bisaa ngertiin aku, sabarr samaa sikapp akuu yangg moodyan, gajelas suka ngambekk'an sukaa nangiss'an tapii aku nangis ituu bukann berartii ga bahagiaa samaa kamuu akuu nangiss ituu karnaa akuu sayangg bangett samaaa kamuu takutt kehilangann kamu pergii, akuu mintaa maapp yaa kalau kesannyaa butuhh bangett samaa kamuu,maapp kalauu aku sering ganggu kamu pas lagi main sama temenn😞, maapp jugaa akuu gagal jadii apa yang kamu mau, jauh banget dari kata *sempurna* dan kata terbaik. but, i hope you stay with me and always love me okey? and never break your promise to me. aku suka semua tentang kamu, aku suka kamu marahin aku kalau aku salah, ngasih tau aku mana yang baik mana yang buruk, selalu semangatin dalam segala hal, aku juga suka dengerin suara kamu itu lucuu bangett tauu gan bisa ngebuat aku tenang, notif dari kamu ada notif yang setiap hari aku tunggu pokoknya semua tentang kamu aku sukaa, kamu jangan nanya lagi seberapa sayang nya aku sama kamu pokoknya sayangg bangett. aku bener² sayang dan gamau kehilangan kamu, gamauu kamuu pergii darii akuu, akuu gamauu kamuu hilangg tanpa kabar
+
+
+
+    </div>
+
+    <button class="letter-next" onclick="continueToMemories()">
+
+
+
+     Ayo make a wish ♡
+
+
+
+    </button>
+
+
+
+   </article>
+
+
+
+  </section>
+
+
+
+  <section class="screen hidden" id="loadingScreen">
+
+
+
+   <div class="loading-title">
+
+
+
+    PREPARING YOUR MEMORIES
+
+
+
+   </div>
+
+
+
+   <div class="loading-bar">
+
+
+
+    <div class="loading-progress" id="progress">
+
+
+
+    </div>
+
+
+
+   </div>
+
+
+
+   <div class="loading-percent" id="percent">
+
+
+
+    0%
+
+
+
+   </div>
+
+
+
+  </section>
+
+
+
+  <main class="hidden" id="galleryScreen">
+
+
+
+   <header class="gallery-head">
+
+
+
+    <div class="eyebrow">
+
+
+
+     a little collection of us
+
+
+
+    </div>
+
+
+
+    <h1>
+
+
+
+     Our Memories
+
+
+
+     <span class="heart">
+
+
+
+      ♡
+
+
+
+     </span>
+
+
+
+    </h1>
+
+
+
+    <p>
+
+
+
+     Sepuluh potongan kecil dari cerita yang selalu ingin aku simpan.
+
+
+
+    </p>
+
+
+
+   </header>
+
+
+
+   <section aria-label="Kue ulang tahun" class="cake-section">
+
+
+
+    <div class="cake-caption">
+
+
+
+     a little birthday cake ♡
+
+
+
+    </div>
+
+
+
+    <div class="cake-area">
+
+
+
+     <div class="cake">
+
+
+
+      <div class="cake-plate">
+
+
+
+      </div>
+
+
+
+      <div class="cake-body">
+
+
+
+       <div class="cream c1">
+
+
+
+       </div>
+
+
+
+       <div class="cream c2">
+
+
+
+       </div>
+
+
+
+       <div class="cream c3">
+
+
+
+       </div>
+
+
+
+       <div class="cream c4">
+
+
+
+       </div>
+
+
+
+       <div class="cream c5">
+
+
+
+       </div>
+
+
+
+       <span class="cake-heart ch1">
+
+
+
+        🍓
+
+
+
+       </span>
+
+
+
+       <span class="cake-heart ch2">
+
+
+
+        ♡
+
+
+
+       </span>
+
+
+
+       <span class="cake-heart ch3">
+
+
+
+        🍓
+
+
+
+       </span>
+
+
+
+      </div>
+
+
+
+      <div class="cake-top">
+
+
+
+      </div>
+
+
+
+      <div class="strawberry s1">
+
+
+
+       🍓
+
+
+
+      </div>
+
+
+
+      <div class="strawberry s2">
+
+
+
+       ⚪
+
+
+
+      </div>
+
+
+
+      <div class="strawberry s3">
+
+
+
+       ⚪
+
+
+
+      </div>
+
+
+
+      <div class="strawberry s4">
+
+
+
+       🍓
+
+
+
+      </div>
+
+
+
+      <div class="candle">
+
+
+
+       <div class="flame">
+
+
+
+       </div>
+
+
+
+      </div>
+
+
+
+     </div>
+
+
+
+    </div>
+
+
+
+    <button class="blow-candle-btn" id="blowCandleBtn" onclick="blowOutCandle()" type="button">
+
+
+
+     🌬️ Tiup lilinnya
+
+
+
+    </button>
+
+
+
+    <p class="candle-message" id="candleMessage">
+
+
+
+     Tutup mata, buat permohonan, lalu tiup lilinnya ♡
+
+
+
+    </p>
+
+
+
+   </section>
+
+
+
+<section aria-label="10 foto kenangan" class="polaroid-grid" id="polaroidGrid">
+
+
+
+    <div class="flower-bouquet" id="flowerBouquet" role="button" tabindex="0" aria-label="Klik buket bunga">
+
+
+
+        <div class="bouquet-emoji">💐</div>
+
+
+
+        <div class="bouquet-caption">a little flower for you ♡</div>
+
+
+
+        <div class="bouquet-hint">✧ tap me ✧</div>
+
+
+
+    </div>
+
+
+
+</section>
+
+
+
+  <div class="modal" id="modal" onclick="if(event.target===this)closeCard()">
+
+
+
+   <div class="modal-card">
+
+
+
+    <button class="close-btn" onclick="closeCard()">
+
+
+
+     &times;
+
+
+
+    </button>
+
+
+
+    <img alt="Foto kenangan" id="modalImage"/>
+
+
+
+    <h2 id="modalTitle">
+
+
+
+    </h2>
+
+
+
+    <p id="modalMessage">
+
+
+
+    </p>
+
+
+
+   </div>
+
+
+
+  </div>
+
+
+
+
+
+<aside id="nowPlaying" aria-label="Pemutar musik mini">
+
+  <div class="now-playing-art">
+
+    <img id="nowPlayingCover" src="cover.jpg" alt="Cover lagu yang sedang diputar" onerror="this.style.display='none'">
+
+  </div>
+
+  <div class="now-playing-main">
+
+    <div class="now-playing-label">NOW PLAYING ♡</div>
+
+    <div id="nowPlayingTitle">Pilih lagu</div>
+
+    <div id="nowPlayingArtist">Little Playlist</div>
+
+    <div class="now-playing-timeline">
+
+      <span id="musicCurrentTime">0:00</span>
+
+      <input id="musicProgress" type="range" min="0" max="100" value="0" step="0.1" aria-label="Posisi lagu">
+
+      <span id="musicDuration">0:00</span>
+
+    </div>
+
+  </div>
+
+  <button id="nowPlayingToggle" type="button" aria-label="Jeda lagu" onclick="toggleMiniPlayer()">Ⅱ</button>
+
+</aside>
+
+
+
+<script>
+
+
+
+const CORRECT_PIN="1611";
+
+
+
+let enteredPin="";
+
+
+
+const passkey=document.getElementById("passkey-screen"),playlistScreen=document.getElementById("playlistScreen"),giftScreen=document.getElementById("giftScreen"),letterScreen=document.getElementById("letterScreen"),loadingScreen=document.getElementById("loadingScreen"),gallery=document.getElementById("galleryScreen");
+
+
+
+let activeSong=-1;
+
+
+
+const songNames = ["Kasih Putih", "Dunia Yang Nanti", "About You"];
+
+const songArtists = ["Glenn Fredly", "Raim Laode", "The 1975"];
+
+const songCovers = ["cover.jpg", "cover2.jpg", "cover3.jpg"];
+
+const songElements = [
+
+    document.getElementById("song0"),
+
+    document.getElementById("song1"),
+
+    document.getElementById("song2")
+
+];
+
+const miniPlayer = document.getElementById("nowPlaying");
+
+const miniCover = document.getElementById("nowPlayingCover");
+
+const miniTitle = document.getElementById("nowPlayingTitle");
+
+const miniArtist = document.getElementById("nowPlayingArtist");
+
+const miniToggle = document.getElementById("nowPlayingToggle");
+
+const musicProgress = document.getElementById("musicProgress");
+
+const musicCurrentTime = document.getElementById("musicCurrentTime");
+
+const musicDuration = document.getElementById("musicDuration");
+
+
+
+const playlistHeroCover = document.getElementById("playlistHeroCover");
+const playlistCurrentName = document.getElementById("playlistCurrentName");
+const playlistProgress = document.getElementById("playlistProgress");
+const playlistTimeNow = document.getElementById("playlistTimeNow");
+const playlistTimeEnd = document.getElementById("playlistTimeEnd");
+const playlistMainPlay = document.getElementById("playlistMainPlay");
+
+function changeTrack(direction) {
+    const next = activeSong < 0 ? (direction > 0 ? 0 : songElements.length - 1) : (activeSong + direction + songElements.length) % songElements.length;
+    playTrack(next);
+}
+function togglePlaylistPlayback() {
+    if (activeSong < 0) { playTrack(2); return; }
+    toggleMiniPlayer();
+}
+
+function formatMusicTime(seconds) {
+
+    if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+
+    const mins = Math.floor(seconds / 60);
+
+    const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
+
+    return mins + ":" + secs;
+
+}
+
+
+
+function updateMiniPlayer(index) {
+
+    // Sinkronkan cover besar dan nama lagu yang sedang dipilih.
+    if (playlistHeroCover) playlistHeroCover.src = songCovers[index];
+    if (playlistCurrentName) playlistCurrentName.textContent = songNames[index];
+    if (playlistMainPlay) playlistMainPlay.textContent = songElements[index].paused ? "▶" : "Ⅱ";
+
+    miniCover.src = songCovers[index];
+
+    miniTitle.textContent = songNames[index];
+
+    miniArtist.textContent = songArtists[index];
+
+    miniPlayer.classList.add("visible");
+
+    miniToggle.textContent = songElements[index].paused ? "▶" : "Ⅱ";
+
+    miniToggle.setAttribute("aria-label", songElements[index].paused ? "Putar lagu" : "Jeda lagu");
+
+    miniPlayer.classList.toggle("playing", !songElements[index].paused);
+
+    const song = songElements[index];
+
+    musicCurrentTime.textContent = formatMusicTime(song.currentTime);
+
+    musicDuration.textContent = formatMusicTime(song.duration);
+
+    musicProgress.value = song.duration ? (song.currentTime / song.duration) * 100 : 0;
+
+    if (playlistTimeNow) playlistTimeNow.textContent = formatMusicTime(song.currentTime);
+    if (playlistTimeEnd) playlistTimeEnd.textContent = formatMusicTime(song.duration);
+    if (playlistProgress) playlistProgress.value = song.duration ? (song.currentTime / song.duration) * 100 : 0;
+
+}
+
+
+
+function playTrack(index) {
+
+    const status = document.getElementById("trackStatus");
+
+    const buttons = [...document.querySelectorAll(".track-play")];
+
+    const song = songElements[index];
+
+
+
+    if (activeSong === index && !song.paused) {
+
+        song.pause();
+
+        buttons[index].textContent = "▶";
+
+        status.textContent = "Lagu dijeda. Tekan ▶ lagi untuk melanjutkan.";
+
+        updateMiniPlayer(index);
+
+        return;
+
+    }
+
+
+
+    songElements.forEach((otherSong, i) => {
+
+        if (i !== index) {
+
+            otherSong.pause();
+
+            otherSong.currentTime = 0;
+
+            buttons[i].textContent = "▶";
+
+        }
+
+    });
+
+
+
+    activeSong = index;
+
+    // Ganti cover besar seketika saat lagu diklik.
+    if (playlistHeroCover) playlistHeroCover.src = songCovers[index];
+    if (playlistCurrentName) playlistCurrentName.textContent = songNames[index];
+    if (playlistMainPlay) playlistMainPlay.textContent = "Ⅱ";
+
+    miniCover.src = songCovers[index];
+
+    miniTitle.textContent = songNames[index];
+
+    miniArtist.textContent = songArtists[index];
+
+    miniPlayer.classList.add("visible");
+
+
+
+    song.play().then(() => {
+
+        buttons[index].textContent = "Ⅱ";
+
+        status.textContent = "Sedang diputar: " + songNames[index] + " ♫";
+
+        updateMiniPlayer(index);
+
+    }).catch(() => {
+
+        buttons[index].textContent = "▶";
+
+        status.textContent = "File audio belum ditemukan. Pastikan lagu" + (index + 1) + ".mp3 ada di folder HTML.";
+
+        updateMiniPlayer(index);
+
+    });
+
+
+
+    song.onended = () => {
+
+        buttons[index].textContent = "▶";
+
+        status.textContent = "Lagu selesai diputar ♡";
+
+        miniPlayer.classList.remove("playing");
+
+        miniToggle.textContent = "▶";
+
+        miniToggle.setAttribute("aria-label", "Putar lagu");
+
+        musicProgress.value = 100;
+
+    };
+
+}
+
+
+
+function toggleMiniPlayer() {
+
+    if (activeSong < 0) return;
+
+    const song = songElements[activeSong];
+
+    if (song.paused) {
+
+        song.play().then(() => {
+
+            document.querySelectorAll(".track-play")[activeSong].textContent = "Ⅱ";
+
+            updateMiniPlayer(activeSong);
+
+        }).catch(() => {
+
+            document.getElementById("trackStatus").textContent = "Audio belum bisa diputar. Periksa file lagu.";
+
+        });
+
+    } else {
+
+        song.pause();
+
+        document.querySelectorAll(".track-play")[activeSong].textContent = "▶";
+
+        updateMiniPlayer(activeSong);
+
+    }
+
+}
+
+
+
+songElements.forEach((song, index) => {
+
+    song.addEventListener("timeupdate", () => {
+
+        if (activeSong === index) updateMiniPlayer(index);
+
+    });
+
+    song.addEventListener("loadedmetadata", () => {
+
+        if (activeSong === index) updateMiniPlayer(index);
+
+    });
+
+    song.addEventListener("play", () => {
+
+        if (activeSong === index) updateMiniPlayer(index);
+
+    });
+
+    song.addEventListener("pause", () => {
+
+        if (activeSong === index) updateMiniPlayer(index);
+
+    });
+
+});
+
+
+
+playlistProgress.addEventListener("input", () => {
+    if (activeSong < 0) return;
+    const song = songElements[activeSong];
+    if (Number.isFinite(song.duration) && song.duration > 0) song.currentTime = (Number(playlistProgress.value) / 100) * song.duration;
+});
+
+musicProgress.addEventListener("input", () => {
+
+    if (activeSong < 0) return;
+
+    const song = songElements[activeSong];
+
+    if (Number.isFinite(song.duration) && song.duration > 0) {
+
+        song.currentTime = (Number(musicProgress.value) / 100) * song.duration;
+
+    }
+
+});
+
+
+
+function goToGift()
+
+
+
+{
+
+
+
+    playlistScreen.classList.add("hidden");
+
+
+
+    giftScreen.classList.remove("hidden");
+
+
+
+}
+
+
+
+function celebrateMemories(originY=.65)
+
+
+
+{
+
+
+
+    if(typeof confetti!=="function")return;
+
+
+
+    const colors=["#f6c6d7","#d982a2","#ffffff","#f7a8c8"];
+
+
+
+    confetti(
+
+
+
+    {
+
+
+
+        particleCount:90,spread:75,startVelocity:34,origin:
+
+
+
+        {
+
+
+
+            x:.5,y:originY
+
+
+
+        }
+
+
+
+        ,colors,ticks:180,scalar:.9
+
+
+
+    }
+
+
+
+    );
+
+
+
+    setTimeout(()=>
+
+
+
+    {
+
+
+
+        confetti(
+
+
+
+        {
+
+
+
+            particleCount:45,spread:110,startVelocity:23,origin:
+
+
+
+            {
+
+
+
+                x:.25,y:originY
+
+
+
+            }
+
+
+
+            ,colors,ticks:150
+
+
+
+        }
+
+
+
+        );confetti(
+
+
+
+        {
+
+
+
+            particleCount:45,spread:110,startVelocity:23,origin:
+
+
+
+            {
+
+
+
+                x:.75,y:originY
+
+
+
+            }
+
+
+
+            ,colors,ticks:150
+
+
+
+        }
+
+
+
+        );
+
+
+
+    }
+
+
+
+    ,220);
+
+
+
+}
+
+
+
+function continueToMemories()
+
+
+
+{
+
+
+
+    letterScreen.classList.add("hidden");
+
+
+
+    loadingScreen.classList.remove("hidden");
+
+
+
+    let v=0;
+
+
+
+    const timer=setInterval(()=>
+
+
+
+    {
+
+
+
+        v=Math.min(100,v+Math.random()*8+3);document.getElementById("progress").style.width=v+"%";document.getElementById("percent").textContent=Math.floor(v)+"%";if(v>=100)
+
+
+
+        {
+
+
+
+            clearInterval(timer);setTimeout(()=>
+
+
+
+            {
+
+
+
+                loadingScreen.classList.add("hidden");gallery.classList.remove("hidden");
+
+
+
+            }
+
+
+
+            ,350);
+
+
+
+        }
+
+
+
+    }
+
+
+
+    ,100);
+
+
+
+}
+
+
+
+const dots=[...document.querySelectorAll(".dot")];
+
+
+
+function pressKey(key)
+
+
+
+{
+
+
+
+    if(key==="clear")enteredPin=enteredPin.slice(0,-1);
+
+
+
+    else if(key==="enter")
+
+
+
+    {
+
+
+
+        verifyPin();
+
+
+
+        return;
+
+
+
+    }
+
+
+
+    else if(enteredPin.length<4)enteredPin+=key;
+
+
+
+    dots.forEach((d,i)=>d.classList.toggle("filled",i<enteredPin.length));
+
+
+
+    if(enteredPin.length===4&&key!=="clear")setTimeout(verifyPin,180);
+
+
+
+}
+
+
+
+function verifyPin()
+
+
+
+{
+
+
+
+    if(enteredPin===CORRECT_PIN)
+
+
+
+    {
+
+
+
+        passkey.classList.add("hidden");
+
+
+
+        setTimeout(()=>
+
+
+
+        {
+
+
+
+            passkey.style.display="none";playlistScreen.classList.remove("hidden");
+
+
+
+        }
+
+
+
+        ,500);
+
+
+
+    }
+
+
+
+    else
+
+
+
+    {
+
+
+
+        dots.forEach(d=>
+
+
+
+        {
+
+
+
+            d.style.background="#e6a0b8";setTimeout(()=>d.style.background="",350);
+
+
+
+        }
+
+
+
+        );
+
+
+
+        enteredPin="";
+
+
+
+        setTimeout(()=>dots.forEach(d=>d.classList.remove("filled")),350);
+
+
+
+    }
+
+
+
+}
+
+
+
+document.addEventListener("keydown",e=>
+
+
+
+{
+
+
+
+    if(!passkey.classList.contains("hidden"))
+
+
+
+    {
+
+
+
+        if(/^\d$/.test(e.key))pressKey(e.key);if(e.key==="Backspace")pressKey("clear");if(e.key==="Enter")pressKey("enter");
+
+
+
+    }
+
+
+
+    if(e.key==="Escape")closeCard();
+
+
+
+}
+
+
+
+);
+
+
+
+document.getElementById("gift").addEventListener("click",()=>
+
+
+
+{
+
+
+
+    const gift=document.getElementById("gift");if(gift.classList.contains("opening"))return;gift.classList.add("opening");celebrateMemories(.55);document.querySelector("#giftScreen .open-text").textContent="OPENING YOUR GIFT ♡";setTimeout(()=>
+
+
+
+    {
+
+
+
+        giftScreen.classList.add("hidden");letterScreen.classList.remove("hidden");gift.classList.remove("opening");document.querySelector("#giftScreen .open-text").textContent="TAP TO OPEN";
+
+
+
+    }
+
+
+
+    ,850);
+
+
+
+}
+
+
+
+);
+
+
+
+function blowOutCandle()
+
+
+
+{
+
+
+
+    const candle=document.querySelector(".candle"),btn=document.getElementById("blowCandleBtn"),message=document.getElementById("candleMessage");
+
+
+
+    if(!candle.classList.contains("blown-out"))
+
+
+
+    {
+
+
+
+        candle.classList.add("blown-out");
+
+
+
+        celebrateMemories(.68);
+
+
+
+        btn.textContent="✨ Nyalakan lilin lagi";
+
+
+
+        message.textContent="Yeay! Semoga semua harapan baikmu terkabul ♡";
+
+
+
+    }
+
+
+
+    else
+
+
+
+    {
+
+
+
+        candle.classList.remove("blown-out");
+
+
+
+        btn.textContent="🌬️ Tiup lilinnya";
+
+
+
+        message.textContent="Tutup mata, buat permohonan, lalu tiup lilinnya ♡";
+
+
+
+    }
+
+
+
+}
+
+
+
+const items=[
+
+
+
+{
+
+
+
+    image:"foto1.jpeg",title:"The Boy Behind The Lens",message:"cerita yang selalu aku syukuri."
+
+
+
+}
+
+
+
+,
+
+
+
+{
+
+
+
+    image:"foto2.jpeg",title:"The Secret Photografer",message:"kamu keren."
+
+
+
+}
+
+
+
+,
+
+
+
+{
+
+
+
+    image:"foto3.jpeg",title:"Chasing Her Frame",message:"ngejer setiap moment kamu."
+
+
+
+}
+
+
+
+,
+
+
+
+{
+
+
+
+    image:"foto4.jpeg",title:"My Favorite",message:"kamu manusia favoritku."
+
+
+
+}
+
+
+
+,
+
+
+
+{
+
+
+
+    image:"foto5.jpeg",title:"Paparazzo",message:"Satu lagi kenangan kecil untuk disimpan."
+
+
+
+}
+
+
+
+,
+
+
+
+{
+
+
+
+    image:"foto6.jpeg",title:"Ur Pap",message:"selalu bikin aku senyum."
+
+
+
+}
+
+
+
+,
+
+
+
+{
+
+
+
+    image:"foto7.jpeg",title:"Happy With You",message:"i love you."
+
+
+
+}
+
+
+
+,
+
+
+
+{
+
+
+
+    image:"foto8.jpeg",title:"Again, your",message:"foto ini akan selalu punya tempat spesial."
+
+
+
+}
+
+
+
+,
+
+
+
+{
+
+
+
+    image:"foto9.jpeg",title:"My sunshine",message:"Terima kasih sudah jadi bagian indah dari ceritaku."
+
+
+
+}
+
+
+
+,
+
+
+
+{
+
+
+
+    image:"foto10.jpeg",title:"Always, Love",message:"Semoga kamu selalu bersamaku."
+
+
+
+}
+
+
+
+];
+
+
+
+const grid=document.getElementById("polaroidGrid");
+
+
+
+items.forEach((item,i)=>
+
+
+
+{
+
+
+
+    const figure=document.createElement("figure");figure.className="polaroid";figure.style.setProperty("--tilt",`${[-3,2,-1,3,-2,1,2,-3,1,-1][i]}deg`);const img=document.createElement("img");img.src=item.image;img.alt=`Foto kenangan ${i+1}`;img.onerror=()=>
+
+
+
+    {
+
+
+
+        img.onerror=null;img.alt="Foto tidak ditemukan: "+item.image;img.style.objectFit="contain";img.style.padding="12px";img.style.background="#fff0f5";
+
+
+
+    }
+
+
+
+    ;const cap=document.createElement("figcaption");cap.textContent=item.title;figure.append(img,cap);figure.addEventListener("click",()=>openCard(i));grid.appendChild(figure);
+
+
+
+}
+
+
+
+);
+
+
+
+function openCard(i)
+
+
+
+{
+
+
+
+    const item=items[i],img=document.getElementById("modalImage");
+
+
+
+    img.src=item.image;
+
+
+
+    img.onerror=()=>
+
+
+
+    {
+
+
+
+        img.alt="Foto tidak ditemukan: "+item.image;
+
+
+
+    }
+
+
+
+    ;
+
+
+
+    document.getElementById("modalTitle").textContent=item.title;
+
+
+
+    document.getElementById("modalMessage").textContent=item.message;
+
+
+
+    document.getElementById("modal").classList.add("active");
+
+
+
+}
+
+
+
+function closeCard()
+
+
+
+{
+
+
+
+    document.getElementById("modal").classList.remove("active");
+
+
+
+}
+
+
+
+function burstFlowers() {
+
+
+
+    const bouquet = document.getElementById("flowerBouquet");
+
+
+
+    if (!bouquet) return;
+
+
+
+
+
+
+
+    const rect = bouquet.getBoundingClientRect();
+
+
+
+    const centerX = rect.left + rect.width / 2;
+
+
+
+    const centerY = rect.top + rect.height / 2;
+
+
+
+
+
+
+
+    const flowers = [
+
+
+
+        "🌸", "🌷", "🌹", "🌼", "🌺",
+
+
+
+        "🪷", "💮", "🌻", "💖", "✨", "💕"
+
+
+
+    ];
+
+
+
+
+
+
+
+    bouquet.animate([
+
+
+
+        { transform: "scale(1)" },
+
+
+
+        { transform: "scale(1.15) rotate(-6deg)" },
+
+
+
+        { transform: "scale(.95) rotate(6deg)" },
+
+
+
+        { transform: "scale(1)" }
+
+
+
+    ], {
+
+
+
+        duration: 400,
+
+
+
+        easing: "ease-out"
+
+
+
+    });
+
+
+
+
+
+
+
+    for (let i = 0; i < 36; i++) {
+
+
+
+        const flower = document.createElement("span");
+
+
+
+        flower.className = "flying-flower";
+
+
+
+        flower.textContent =
+
+
+
+            flowers[Math.floor(Math.random() * flowers.length)];
+
+
+
+
+
+
+
+        flower.style.left = centerX + "px";
+
+
+
+        flower.style.top = centerY + "px";
+
+
+
+
+
+
+
+        const angle = Math.random() * Math.PI * 2;
+
+
+
+        const distance = 100 + Math.random() * 300;
+
+
+
+
+
+
+
+        flower.style.setProperty(
+
+
+
+            "--x",
+
+
+
+            Math.cos(angle) * distance + "px"
+
+
+
+        );
+
+
+
+
+
+
+
+        flower.style.setProperty(
+
+
+
+            "--y",
+
+
+
+            Math.sin(angle) * distance + "px"
+
+
+
+        );
+
+
+
+
+
+
+
+        flower.style.setProperty(
+
+
+
+            "--rotation",
+
+
+
+            (Math.random() * 720 - 360) + "deg"
+
+
+
+        );
+
+
+
+
+
+
+
+        flower.style.animationDelay =
+
+
+
+            Math.random() * .2 + "s";
+
+
+
+
+
+
+
+        document.body.appendChild(flower);
+
+
+
+
+
+
+
+        flower.addEventListener("animationend", () => flower.remove());
+
+
+
+    }
+
+
+
+
+
+
+
+    if (typeof celebrateMemories === "function") {
+
+
+
+        celebrateMemories(.6);
+
+
+
+    }
+
+
+
+}
+
+
+
+
+
+
+
+const flowerBouquet = document.getElementById("flowerBouquet");
+
+
+
+
+
+
+
+if (flowerBouquet) {
+
+
+
+    flowerBouquet.addEventListener("click", burstFlowers);
+
+
+
+
+
+
+
+    flowerBouquet.addEventListener("keydown", event => {
+
+
+
+        if (event.key === "Enter" || event.key === " ") {
+
+
+
+            event.preventDefault();
+
+
+
+            burstFlowers();
+
+
+
+        }
+
+
+
+    });
+
+
+
+}
+
+
+
+</script>
+
+
+
+ </body>
+
+
+
+</html>
