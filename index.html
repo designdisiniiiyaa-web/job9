@@ -638,7 +638,7 @@ button:focus-visible, input:focus-visible, [role="button"]:focus-visible {
   <div class="playlist-panel">
     <div class="playlist-topline"><span>✦ SPECIAL PLAYLIST</span><span>2026</span></div>
     <div class="playlist-hero">
-      <div class="playlist-feature-cover"><img id="playlistHeroCover" src="cover3.jpg" alt="Cover playlist" onerror="this.style.opacity='.2'"></div>
+      <div class="playlist-feature-cover"><img id="playlistHeroCover" src="cover1.jpg" alt="Cover playlist" onerror="this.style.opacity='.2'"></div>
       <div class="playlist-feature-info">
         <div class="playlist-kicker">A LITTLE SOUNDTRACK FOR YOU</div>
         <h1 class="playlist-title">Little Playlist <span>♡</span></h1>
@@ -650,8 +650,8 @@ button:focus-visible, input:focus-visible, [role="button"]:focus-visible {
       <article class="track">
         <span class="track-number">01</span>
         <div class="track-cover"><img alt="Cover lagu pertama" onerror="this.style.opacity='.25'" src="cover1.jpg"></div>
-        <div class="track-info"><div class="track-name">Kasih Putih</div><div class="track-artist">Glenn Fredly</div></div>
-        <button aria-label="Putar Kasih Putih" class="track-play" onclick="playTrack(0)">▶</button>
+        <div class="track-info"><div class="track-name">Kita lewati berdua</div><div class="track-artist">Overnight</div></div>
+        <button aria-label="Putar Kita lewati berdua" class="track-play" onclick="playTrack(0)">▶</button>
       </article>
       <article class="track">
         <span class="track-number">02</span>
@@ -662,8 +662,8 @@ button:focus-visible, input:focus-visible, [role="button"]:focus-visible {
       <article class="track">
         <span class="track-number">03</span>
         <div class="track-cover"><img alt="Cover lagu ketiga" onerror="this.style.opacity='.25'" src="cover3.jpg"></div>
-        <div class="track-info"><div class="track-name">About You</div><div class="track-artist">The 1975</div></div>
-        <button aria-label="Putar About You" class="track-play" onclick="playTrack(2)">▶</button>
+        <div class="track-info"><div class="track-name">Hingga Tua Bersama</div><div class="track-artist">Rizky Febrian</div></div>
+        <button aria-label="Putar Hingga Tua Bersama" class="track-play" onclick="playTrack(2)">▶</button>
       </article>
     </div>
     <div class="track-status" id="trackStatus">Pilih lagu untuk memulai playlist ♡</div>
@@ -1190,7 +1190,7 @@ happy birthday cayaaanngg acuuuuu yangg gantengg!!!🤍💫
 
   <div class="now-playing-art">
 
-    <img id="nowPlayingCover" src="cover.jpg" alt="Cover lagu yang sedang diputar" onerror="this.style.display='none'">
+    <img id="nowPlayingCover" src="cover1.jpg" alt="Cover lagu yang sedang diputar" onerror="this.style.display='none'">
 
   </div>
 
@@ -1224,56 +1224,36 @@ happy birthday cayaaanngg acuuuuu yangg gantengg!!!🤍💫
 
 
 
-const CORRECT_PIN="1611";
+const CORRECT_PIN = "1611";
+let enteredPin = "";
 
+const passkey = document.getElementById("passkey-screen");
+const playlistScreen = document.getElementById("playlistScreen");
+const giftScreen = document.getElementById("giftScreen");
+const letterScreen = document.getElementById("letterScreen");
+const loadingScreen = document.getElementById("loadingScreen");
+const gallery = document.getElementById("galleryScreen");
 
+let activeSong = -1;
 
-let enteredPin="";
-
-
-
-const passkey=document.getElementById("passkey-screen"),playlistScreen=document.getElementById("playlistScreen"),giftScreen=document.getElementById("giftScreen"),letterScreen=document.getElementById("letterScreen"),loadingScreen=document.getElementById("loadingScreen"),gallery=document.getElementById("galleryScreen");
-
-
-
-let activeSong=-1;
-
-
-
-const songNames = ["Kasih Putih", "Dunia Yang Nanti", "About You"];
-
-const songArtists = ["Glenn Fredly", "Raim Laode", "The 1975"];
-
-const songCovers = ["cover.jpg", "cover2.jpg", "cover3.jpg"];
-
+const songNames = ["Kita lewati berdua", "Dunia Yang Nanti", "Hingga Tua Bersama"];
+const songArtists = ["Overnight", "Raim Laode", "Rizky Febrian"];
+const songCovers = ["cover1.jpg", "cover2.jpg", "cover3.jpg"];
 const songElements = [
-
-    document.getElementById("song0"),
-
-    document.getElementById("song1"),
-
-    document.getElementById("song2")
-
+  document.getElementById("song0"),
+  document.getElementById("song1"),
+  document.getElementById("song2")
 ];
-
+const trackButtons = [...document.querySelectorAll(".track-play")];
+const trackStatus = document.getElementById("trackStatus");
 const miniPlayer = document.getElementById("nowPlaying");
-
 const miniCover = document.getElementById("nowPlayingCover");
-
 const miniTitle = document.getElementById("nowPlayingTitle");
-
 const miniArtist = document.getElementById("nowPlayingArtist");
-
 const miniToggle = document.getElementById("nowPlayingToggle");
-
 const musicProgress = document.getElementById("musicProgress");
-
 const musicCurrentTime = document.getElementById("musicCurrentTime");
-
 const musicDuration = document.getElementById("musicDuration");
-
-
-
 const playlistHeroCover = document.getElementById("playlistHeroCover");
 const playlistCurrentName = document.getElementById("playlistCurrentName");
 const playlistProgress = document.getElementById("playlistProgress");
@@ -1281,250 +1261,160 @@ const playlistTimeNow = document.getElementById("playlistTimeNow");
 const playlistTimeEnd = document.getElementById("playlistTimeEnd");
 const playlistMainPlay = document.getElementById("playlistMainPlay");
 
-function changeTrack(direction) {
-    const next = activeSong < 0 ? (direction > 0 ? 0 : songElements.length - 1) : (activeSong + direction + songElements.length) % songElements.length;
-    playTrack(next);
-}
-function togglePlaylistPlayback() {
-    if (activeSong < 0) { playTrack(2); return; }
-    toggleMiniPlayer();
-}
-
 function formatMusicTime(seconds) {
-
-    if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
-
-    const mins = Math.floor(seconds / 60);
-
-    const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
-
-    return mins + ":" + secs;
-
+  if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+  return Math.floor(seconds / 60) + ":" + String(Math.floor(seconds % 60)).padStart(2, "0");
 }
 
+function syncPlaylistUI(index) {
+  const song = songElements[index];
+  if (!song) return;
+  const isPlaying = !song.paused && !song.ended;
 
+  if (playlistHeroCover) playlistHeroCover.src = songCovers[index];
+  if (playlistCurrentName) playlistCurrentName.textContent = songNames[index];
+  if (playlistMainPlay) playlistMainPlay.textContent = isPlaying ? "Ⅱ" : "▶";
 
-function updateMiniPlayer(index) {
-
-    // Sinkronkan cover besar dan nama lagu yang sedang dipilih.
-    if (playlistHeroCover) playlistHeroCover.src = songCovers[index];
-    if (playlistCurrentName) playlistCurrentName.textContent = songNames[index];
-    if (playlistMainPlay) playlistMainPlay.textContent = songElements[index].paused ? "▶" : "Ⅱ";
-
+  if (miniCover) {
+    miniCover.style.display = "";
     miniCover.src = songCovers[index];
-
-    miniTitle.textContent = songNames[index];
-
-    miniArtist.textContent = songArtists[index];
-
+  }
+  if (miniTitle) miniTitle.textContent = songNames[index];
+  if (miniArtist) miniArtist.textContent = songArtists[index];
+  if (miniPlayer) {
     miniPlayer.classList.add("visible");
+    miniPlayer.classList.toggle("playing", isPlaying);
+  }
+  if (miniToggle) {
+    miniToggle.textContent = isPlaying ? "Ⅱ" : "▶";
+    miniToggle.setAttribute("aria-label", isPlaying ? "Jeda lagu" : "Putar lagu");
+  }
 
-    miniToggle.textContent = songElements[index].paused ? "▶" : "Ⅱ";
+  const duration = Number.isFinite(song.duration) ? song.duration : 0;
+  const current = Number.isFinite(song.currentTime) ? song.currentTime : 0;
+  const progress = duration > 0 ? (current / duration) * 100 : 0;
 
-    miniToggle.setAttribute("aria-label", songElements[index].paused ? "Putar lagu" : "Jeda lagu");
+  if (musicCurrentTime) musicCurrentTime.textContent = formatMusicTime(current);
+  if (musicDuration) musicDuration.textContent = formatMusicTime(duration);
+  if (musicProgress) musicProgress.value = progress;
+  if (playlistTimeNow) playlistTimeNow.textContent = formatMusicTime(current);
+  if (playlistTimeEnd) playlistTimeEnd.textContent = formatMusicTime(duration);
+  if (playlistProgress) playlistProgress.value = progress;
 
-    miniPlayer.classList.toggle("playing", !songElements[index].paused);
-
-    const song = songElements[index];
-
-    musicCurrentTime.textContent = formatMusicTime(song.currentTime);
-
-    musicDuration.textContent = formatMusicTime(song.duration);
-
-    musicProgress.value = song.duration ? (song.currentTime / song.duration) * 100 : 0;
-
-    if (playlistTimeNow) playlistTimeNow.textContent = formatMusicTime(song.currentTime);
-    if (playlistTimeEnd) playlistTimeEnd.textContent = formatMusicTime(song.duration);
-    if (playlistProgress) playlistProgress.value = song.duration ? (song.currentTime / song.duration) * 100 : 0;
-
+  trackButtons.forEach((button, i) => {
+    button.textContent = i === index && isPlaying ? "Ⅱ" : "▶";
+    const track = button.closest(".track");
+    if (track) {
+      track.classList.toggle("active", i === index);
+      track.classList.toggle("playing", i === index && isPlaying);
+    }
+  });
 }
-
-
 
 function playTrack(index) {
+  if (!Number.isInteger(index) || index < 0 || index >= songElements.length) return;
+  const song = songElements[index];
 
-    const status = document.getElementById("trackStatus");
+  if (activeSong === index && !song.paused) {
+    song.pause();
+    if (trackStatus) trackStatus.textContent = "Lagu dijeda. Tekan ▶ untuk melanjutkan.";
+    syncPlaylistUI(index);
+    return;
+  }
 
-    const buttons = [...document.querySelectorAll(".track-play")];
-
-    const song = songElements[index];
-
-
-
-    if (activeSong === index && !song.paused) {
-
-        song.pause();
-
-        buttons[index].textContent = "▶";
-
-        status.textContent = "Lagu dijeda. Tekan ▶ lagi untuk melanjutkan.";
-
-        updateMiniPlayer(index);
-
-        return;
-
+  songElements.forEach((otherSong, i) => {
+    if (i !== index) {
+      otherSong.pause();
+      try { otherSong.currentTime = 0; } catch (_) {}
     }
+  });
 
+  activeSong = index;
+  syncPlaylistUI(index);
+  if (trackStatus) trackStatus.textContent = "Memuat lagu: " + songNames[index] + " ♡";
 
-
-    songElements.forEach((otherSong, i) => {
-
-        if (i !== index) {
-
-            otherSong.pause();
-
-            otherSong.currentTime = 0;
-
-            buttons[i].textContent = "▶";
-
-        }
-
-    });
-
-
-
-    activeSong = index;
-
-    // Ganti cover besar seketika saat lagu diklik.
-    if (playlistHeroCover) playlistHeroCover.src = songCovers[index];
-    if (playlistCurrentName) playlistCurrentName.textContent = songNames[index];
-    if (playlistMainPlay) playlistMainPlay.textContent = "Ⅱ";
-
-    miniCover.src = songCovers[index];
-
-    miniTitle.textContent = songNames[index];
-
-    miniArtist.textContent = songArtists[index];
-
-    miniPlayer.classList.add("visible");
-
-
-
-    song.play().then(() => {
-
-        buttons[index].textContent = "Ⅱ";
-
-        status.textContent = "Sedang diputar: " + songNames[index] + " ♫";
-
-        updateMiniPlayer(index);
-
+  const playPromise = song.play();
+  if (playPromise && typeof playPromise.then === "function") {
+    playPromise.then(() => {
+      if (activeSong !== index) return;
+      if (trackStatus) trackStatus.textContent = "Sedang diputar: " + songNames[index] + " ♫";
+      syncPlaylistUI(index);
     }).catch(() => {
-
-        buttons[index].textContent = "▶";
-
-        status.textContent = "File audio belum ditemukan. Pastikan lagu" + (index + 1) + ".mp3 ada di folder HTML.";
-
-        updateMiniPlayer(index);
-
+      if (activeSong !== index) return;
+      if (trackStatus) trackStatus.textContent =
+        "Audio gagal diputar. Pastikan file " + (index + 1) + " (" +
+        ["lagu1.mp3", "lagu2.mp3", "lagu3.mp3"][index] + ") ada satu folder dengan HTML.";
+      syncPlaylistUI(index);
     });
-
-
-
-    song.onended = () => {
-
-        buttons[index].textContent = "▶";
-
-        status.textContent = "Lagu selesai diputar ♡";
-
-        miniPlayer.classList.remove("playing");
-
-        miniToggle.textContent = "▶";
-
-        miniToggle.setAttribute("aria-label", "Putar lagu");
-
-        musicProgress.value = 100;
-
-    };
-
+  }
 }
-
-
 
 function toggleMiniPlayer() {
-
-    if (activeSong < 0) return;
-
-    const song = songElements[activeSong];
-
-    if (song.paused) {
-
-        song.play().then(() => {
-
-            document.querySelectorAll(".track-play")[activeSong].textContent = "Ⅱ";
-
-            updateMiniPlayer(activeSong);
-
-        }).catch(() => {
-
-            document.getElementById("trackStatus").textContent = "Audio belum bisa diputar. Periksa file lagu.";
-
-        });
-
-    } else {
-
-        song.pause();
-
-        document.querySelectorAll(".track-play")[activeSong].textContent = "▶";
-
-        updateMiniPlayer(activeSong);
-
-    }
-
+  if (activeSong < 0) {
+    playTrack(0);
+    return;
+  }
+  const song = songElements[activeSong];
+  if (song.paused) {
+    const result = song.play();
+    if (result && result.catch) result.catch(() => {
+      if (trackStatus) trackStatus.textContent = "Audio belum bisa diputar. Periksa file lagu.";
+    });
+  } else {
+    song.pause();
+  }
+  syncPlaylistUI(activeSong);
 }
 
+function togglePlaylistPlayback() {
+  if (activeSong < 0) playTrack(0);
+  else toggleMiniPlayer();
+}
 
+function changeTrack(direction) {
+  const next = activeSong < 0
+    ? (direction > 0 ? 0 : songElements.length - 1)
+    : (activeSong + direction + songElements.length) % songElements.length;
+  playTrack(next);
+}
 
 songElements.forEach((song, index) => {
-
-    song.addEventListener("timeupdate", () => {
-
-        if (activeSong === index) updateMiniPlayer(index);
-
-    });
-
-    song.addEventListener("loadedmetadata", () => {
-
-        if (activeSong === index) updateMiniPlayer(index);
-
-    });
-
-    song.addEventListener("play", () => {
-
-        if (activeSong === index) updateMiniPlayer(index);
-
-    });
-
-    song.addEventListener("pause", () => {
-
-        if (activeSong === index) updateMiniPlayer(index);
-
-    });
-
-});
-
-
-
-playlistProgress.addEventListener("input", () => {
-    if (activeSong < 0) return;
-    const song = songElements[activeSong];
-    if (Number.isFinite(song.duration) && song.duration > 0) song.currentTime = (Number(playlistProgress.value) / 100) * song.duration;
-});
-
-musicProgress.addEventListener("input", () => {
-
-    if (activeSong < 0) return;
-
-    const song = songElements[activeSong];
-
-    if (Number.isFinite(song.duration) && song.duration > 0) {
-
-        song.currentTime = (Number(musicProgress.value) / 100) * song.duration;
-
+  if (!song) return;
+  song.addEventListener("timeupdate", () => {
+    if (activeSong === index) syncPlaylistUI(index);
+  });
+  song.addEventListener("loadedmetadata", () => {
+    if (activeSong === index) syncPlaylistUI(index);
+  });
+  song.addEventListener("play", () => {
+    if (activeSong === index) syncPlaylistUI(index);
+  });
+  song.addEventListener("pause", () => {
+    if (activeSong === index) syncPlaylistUI(index);
+  });
+  song.addEventListener("ended", () => {
+    if (activeSong !== index) return;
+    if (trackStatus) trackStatus.textContent = "Lagu selesai diputar ♡";
+    syncPlaylistUI(index);
+  });
+  song.addEventListener("error", () => {
+    if (activeSong === index && trackStatus) {
+      trackStatus.textContent = "File " + ["lagu1.mp3", "lagu2.mp3", "lagu3.mp3"][index] +
+        " tidak ditemukan atau format audionya tidak didukung.";
     }
-
+  });
 });
 
-
+function seekSong(value) {
+  if (activeSong < 0) return;
+  const song = songElements[activeSong];
+  if (Number.isFinite(song.duration) && song.duration > 0) {
+    song.currentTime = (Number(value) / 100) * song.duration;
+    syncPlaylistUI(activeSong);
+  }
+}
+if (playlistProgress) playlistProgress.addEventListener("input", () => seekSong(playlistProgress.value));
+if (musicProgress) musicProgress.addEventListener("input", () => seekSong(musicProgress.value));
 
 function goToGift()
 
